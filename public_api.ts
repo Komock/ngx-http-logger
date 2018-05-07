@@ -1,0 +1,1 @@
+export { HttpLoggerModule } from './src/app/modules/http-logger/http-logger.module';

@@ -29,3 +29,5 @@ import { HttpLoggerModule } from 'http-logger.module';
 Then just open browser console and run some requests.
 
 ![preview](https://raw.githubusercontent.com/Komock/ngx-http-logger/master/preview.png)
+![preview-2](https://raw.githubusercontent.com/Komock/ngx-http-logger/master/preview-2.png)
+Inside console group you still have access to raw response/error.

@@ -2,69 +2,104 @@ import { Injectable } from '@angular/core';
 import { HttpInterceptor, HttpEvent, HttpHandler, HttpRequest, HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
+import { of } from 'rxjs/observable/of';
 import 'rxjs/observable/of';
+import { ErrorObservable } from 'rxjs/observable/ErrorObservable';
 
-const successStyles = [
-	'background: #C5E1A5',
-	'color: #000',
-	'font-weight: bold',
-	'display: block',
-	'text-align: center'
-].join(';');
-
-const failStyles = [
-	'background: #FFAB91',
-	'color: #000',
-	'font-weight: bold',
-	'display: block',
-	'text-align: center'
-].join(';');
 
 @Injectable()
 export class LoggerInterceptor {
 
 	private exp: RegExp = /https?:\/\/(www\.)?|www\./;
+	private successStyle = `
+		background: #C5E1A5;
+		color: #000;
+		font-weight: bold;
+		display: block;
+		text-align: center;`;
+	private infoStyle = `
+		background: #FFF176;
+		color: #000;
+		font-weight: bold;
+		display: block;
+		text-align: center;`;
+	private errorStyle = `
+		background: #FFAB91;
+		color: #000;
+		font-weight: bold;
+		display: block;
+		text-align: center;`;
 
 	public intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-		let startStamp;
-		const url = request.url.replace(this.exp, '');
+		const time: any = {};
 		return next.handle(request).pipe(
-			map((res: any) => {
-				//== Request
-				if (res.type === 0) {
-					startStamp = Date.now();
-					return;
-				}
-
-				const time = (Date.now()) - startStamp;
-				
-				//== Response				
-				console.groupCollapsed(`%c Success ${res.status} | ${request.method} | ${time}ms. | ${url} `, successStyles);
-				console.log(`Method: ${request.method}`);
-				console.log(`URL: ${request.url}`);
-				console.log(`Time: ${time}ms.`);
-				console.log(`Raw Response: `, res);
-				console.groupEnd();
-				return res;
-
+			map((event: HttpEvent<any>) => {
+				this.printMsg(request, event, time);
+				return event;
 			}),
 			catchError((error: HttpErrorResponse) => {
-				const time = (Date.now()) - startStamp;
-				
-				//== Error
-				console.groupCollapsed(`%c Fail ${error.status} | ${request.method} | ${time}ms. | ${url}`, failStyles);
-				console.log(`Backend returned code ${error.status}, message: ${error.message}`);
-				console.log(`Method: ${request.method}`);
-				console.log(`URL: ${request.url}`);
-				console.log(`Time: ${time}ms.`);
-				console.log('Raw Error: ', error);
-				console.groupEnd();
-				return Observable.of(new HttpResponse({
-					body: { error: error.message }
-				}));
-
+				this.printMsg(request, error, time);
+				return new ErrorObservable(error);
+				// return of(new HttpResponse(error));
 			})
 		);
 	}
 
+	public printMsg(request: HttpRequest<any>, event: HttpEvent<any> | HttpErrorResponse, time: any): void {
+		//== Request
+		if (event.type === 0) {
+			time.start = Date.now();
+			return;
+		}
+
+		// Time
+		time.end = Date.now();
+		const duration = time.end - time.start;
+
+		const url = request.url.replace(this.exp, '');
+		const response = event as HttpResponse<any>;
+		const statusCode = response.status;
+		const statusText = response.statusText;
+		const groupCode = Number(statusCode.toString().substr(0, 1));
+		let groupName;
+		switch (groupCode) {
+			case 1:
+				groupName = 'Informational';
+				break;
+			case 2:
+				groupName = 'Success';
+				break;
+			case 3:
+				groupName = 'Redirection';
+				break;
+			case 4:
+				groupName = 'Client Error';
+				break;
+			case 5:
+				groupName = 'Server Error';
+				break;
+			default:
+				groupName = 'Error';
+				break;
+		}
+
+		let style;
+		if (groupCode > 3 || groupCode === 0) {
+			style = this.errorStyle;
+		} else if (groupCode === 2) {
+			style = this.successStyle;
+		} else {
+			style = this.infoStyle;
+		}
+
+		//== Response				
+		console.groupCollapsed(`%c ${groupName} - ${statusText} ${statusCode} | ${request.method} | ${duration}ms. | ${url} `, style);
+		console.log(`Method: ${request.method}`);
+		console.log(`URL: ${request.url}`);
+		console.log(`Time: ${duration}ms.`);
+		console.log(`Raw Response: `, response);
+		console.groupEnd();
+	}
+
 }
+

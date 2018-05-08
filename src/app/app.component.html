@@ -1,9 +1,17 @@
 <div class="test-box">
   <h1>Test Angular HTTP Logger</h1>
 
+  <h3 class="list__title">Test API</h3>
   <ul class="list">
-    <li *ngFor="let u of urls" class="list__item">{{u.name}}:
-      <button class="btn" [ngClass]="{'btn--error': u.type==='error'}" [disabled]="btnsDisabled" (click)="getData(u.url)">Run</button>
+    <li *ngFor="let item of testApiUrls" class="list__item">{{item.name}}:
+      <button class="btn" [ngClass]="{'btn--error': item.type==='error'}" [disabled]="btnsDisabled" (click)="getData(item.url, item.method)">Run</button>
+    </li>
+  </ul>
+
+  <h3 class="list__title">Vendor API</h3>
+  <ul class="list">
+    <li *ngFor="let item of vendorUrls" class="list__item">{{item.name}}:
+      <button class="btn" [ngClass]="{'btn--error': item.type==='error'}" [disabled]="btnsDisabled" (click)="getData(item.url, item.method)">Run</button>
     </li>
   </ul>
 

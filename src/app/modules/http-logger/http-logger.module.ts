@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LoggerInterceptor } from '../../_interceptors/logger.interceptor';
+export { LoggerInterceptor } from '../../_interceptors/logger.interceptor';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 
 @NgModule({
@@ -17,4 +18,4 @@ import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 		}
 	]
 })
-export class HttpLoggerModule { }
+export class HttpLoggerModule {}

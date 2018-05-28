@@ -2,9 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpInterceptor, HttpEvent, HttpHandler, HttpRequest, HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { of } from 'rxjs/observable/of';
-import 'rxjs/observable/of';
-import { ErrorObservable } from 'rxjs/observable/ErrorObservable';
+import { _throw } from 'rxjs/observable/throw';
+
 
 
 @Injectable()
@@ -30,7 +29,7 @@ export class LoggerInterceptor {
 		display: block;
 		text-align: center;`;
 
-	public intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+	public intercept(request: HttpRequest<any>, next: HttpHandler): Observable<any> {
 		const time: any = {};
 		return next.handle(request).pipe(
 			map((event: HttpEvent<any>) => {
@@ -39,7 +38,7 @@ export class LoggerInterceptor {
 			}),
 			catchError((error: HttpErrorResponse) => {
 				this.printMsg(request, error, time);
-				return new ErrorObservable(error);
+				return _throw(error);
 				// return of(new HttpResponse(error));
 			})
 		);

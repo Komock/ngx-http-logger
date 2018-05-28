@@ -65,20 +65,20 @@ export class AppComponent {
 				this._httpClient.get(url)
 					.pipe(catchError(this.errorHandler))
 					.subscribe((data: any) => {
-						// if (data) {
-						// 	console.log('GET. Output in Component: ', data);
-						// 	console.log('\n');
-						// }
+						if (data) {
+							console.log('GET. Output in Component: ', data);
+							console.log('\n');
+						}
 						this.btnsDisabled = false;
 					});
 				break;
 			case 'post':
 				this._httpClient.post(url, { foo: 'bar' })
 					.subscribe((data: any) => {
-						// if (data) {
-						// 	console.log('POST. Output in Component: ', data);
-						// 	console.log('\n');
-						// }
+						if (data) {
+							console.log('POST. Output in Component: ', data);
+							console.log('\n');
+						}
 						this.btnsDisabled = false;
 					});
 				break;
@@ -86,7 +86,7 @@ export class AppComponent {
 	}
 
 	public errorHandler(error: any): Observable<any> {
-		// console.log('Output Error in Component: ', error);
+		console.log('Output Error in Component: ', error);
 		return of(null);
 	}
 }

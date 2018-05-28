@@ -51,6 +51,7 @@
     "koa-logger": "^3.2.0",
     "koa-router": "^7.4.0",
     "koa2-cors": "^2.0.5",
+    "ng-packagr": "^3.0.0",
     "nodemon": "^1.17.4",
     "protractor": "~5.3.0",
     "rxjs": "^6.0.0",

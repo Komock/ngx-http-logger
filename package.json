@@ -1,6 +1,6 @@
 {
   "name": "ngx-http-logger",
-  "version": "1.0.6",
+  "version": "1.0.8",
   "author": "Vadim Petrov – github.com/komock",
   "repository": {
     "type": "git",
@@ -16,7 +16,7 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "packagr": "ng-packagr -p ng-package.json",
-    "api:start": "nodemon --inspect ./index.js --watch index.js --watch middlewares"
+    "api:start": "nodemon --inspect ./test-api.js --watch test-api.js --watch middlewares"
   },
   "description": "Angular6 Http Logger Module. Print extended info to browser console. Useful for debug requests to API",
   "keywords": [

@@ -14,7 +14,7 @@ import { LoggerInterceptor } from './_interceptors/logger.interceptor';
 	exports: [],
 	imports: [
 		BrowserModule,
-		HttpLoggerModule
+		HttpLoggerModule.forRoot({ excludeDomains: ['api.github.com']})
 	],
 	bootstrap: [AppComponent]
 })

@@ -1,13 +1,18 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Inject } from '@angular/core';
 import { HttpInterceptor, HttpEvent, HttpHandler, HttpRequest, HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
 import { _throw } from 'rxjs/observable/throw';
+import { LoggerConfigService } from '../_services/logger-config.service';
 
 
 
 @Injectable()
-export class LoggerInterceptor {
+export class LoggerInterceptor implements HttpInterceptor {
+
+	public constructor(
+		@Inject(LoggerConfigService) private _config
+	) {}
 
 	private exp: RegExp = /https?:\/\/(www\.)?|www\./;
 	private successStyle = `
@@ -33,13 +38,17 @@ export class LoggerInterceptor {
 		const time: any = {};
 		return next.handle(request).pipe(
 			map((event: HttpEvent<any>) => {
-				this.printMsg(request, event, time);
+				let isExcluded;
+				if (this._config.excludeDomains && this._config.excludeDomains.length) {
+					isExcluded = this._config.excludeDomains
+						.some( (domain: string) => request.url.includes(domain) );
+				}
+				if (!isExcluded) this.printMsg(request, event, time);
 				return event;
 			}),
 			catchError((error: HttpErrorResponse) => {
 				this.printMsg(request, error, time);
 				return _throw(error);
-				// return of(new HttpResponse(error));
 			})
 		);
 	}
@@ -50,6 +59,9 @@ export class LoggerInterceptor {
 			time.start = Date.now();
 			return;
 		}
+		console.log(this._config);
+		console.log(request);
+		
 
 		// Time
 		time.end = Date.now();
@@ -57,6 +69,7 @@ export class LoggerInterceptor {
 
 		const url = request.url.replace(this.exp, '');
 		const response = event as HttpResponse<any>;
+		console.log(response);
 		const statusCode = response.status;
 		const statusText = response.statusText;
 		const groupCode = Number(statusCode.toString().substr(0, 1));
@@ -93,10 +106,8 @@ export class LoggerInterceptor {
 
 		//== Response				
 		console.groupCollapsed(`%c ${groupName} - ${statusText} ${statusCode} | ${request.method} | ${duration}ms. | ${url} `, style);
-		console.log(`Method: ${request.method}`);
-		console.log(`URL: ${request.url}`);
-		console.log(`Time: ${duration}ms.`);
-		console.log(`Raw Response: `, response);
+		console.log(`Request: `, request);
+		console.log(`Response: `, response);
 		console.groupEnd();
 	}
 

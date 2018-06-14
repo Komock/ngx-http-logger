@@ -35,6 +35,11 @@ export class AppComponent {
 		method: 'get',
 		name: '/get-500/',
 		url: 'http://localhost:3090/api/get-500/'
+	}, {
+		type: 'success',
+		method: 'post',
+		name: '/post-200/',
+		url: 'http://localhost:3090/api/post-200/'
 	}];
 
 	public vendorUrls = [{

@@ -58,10 +58,7 @@ export class LoggerInterceptor implements HttpInterceptor {
 		if (event.type === 0) {
 			time.start = Date.now();
 			return;
-		}
-		console.log(this._config);
-		console.log(request);
-		
+		}		
 
 		// Time
 		time.end = Date.now();
@@ -69,7 +66,6 @@ export class LoggerInterceptor implements HttpInterceptor {
 
 		const url = request.url.replace(this.exp, '');
 		const response = event as HttpResponse<any>;
-		console.log(response);
 		const statusCode = response.status;
 		const statusText = response.statusText;
 		const groupCode = Number(statusCode.toString().substr(0, 1));

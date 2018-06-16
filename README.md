@@ -22,7 +22,7 @@ import { HttpLoggerModule } from 'ngx-http-logger';
 	],
 	imports: [
 		BrowserModule,
-		HttpLoggerModule
+		HttpLoggerModule.forRoot({ excludeDomains: ['api.github.com']})
 	],
 	bootstrap: [AppComponent]
 });

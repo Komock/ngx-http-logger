@@ -1,8 +1,7 @@
 import { Injectable, Inject } from '@angular/core';
 import { HttpInterceptor, HttpEvent, HttpHandler, HttpRequest, HttpResponse, HttpErrorResponse } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import { _throw } from 'rxjs/observable/throw';
 import { LoggerConfigService } from '../_services/logger-config.service';
 
 
@@ -48,7 +47,7 @@ export class LoggerInterceptor implements HttpInterceptor {
 			}),
 			catchError((error: HttpErrorResponse) => {
 				this.printMsg(request, error, time);
-				return _throw(error);
+				return throwError(error);
 			})
 		);
 	}
